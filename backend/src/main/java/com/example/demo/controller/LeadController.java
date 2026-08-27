@@ -25,8 +25,23 @@ public class LeadController {
     private LeadService service;
 
     @PostMapping
-    public Lead createLead(@RequestBody Lead lead){
-        return service.createLead(lead);
+    public org.springframework.http.ResponseEntity<?> createLead(@RequestBody Lead lead){
+        if (lead.getName() == null || lead.getName().trim().isEmpty()) {
+            return org.springframework.http.ResponseEntity.badRequest().body("Full Name is required");
+        }
+        if (lead.getEmail() == null || lead.getEmail().trim().isEmpty()) {
+            return org.springframework.http.ResponseEntity.badRequest().body("Email is required");
+        }
+        if (!lead.getEmail().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")) {
+            return org.springframework.http.ResponseEntity.badRequest().body("Invalid email format");
+        }
+        if (lead.getPhone() == null || lead.getPhone().trim().isEmpty()) {
+            return org.springframework.http.ResponseEntity.badRequest().body("Phone Number is required");
+        }
+        if (!lead.getPhone().matches("^[+]?[0-9\\s\\-()]{7,20}$")) {
+            return org.springframework.http.ResponseEntity.badRequest().body("Invalid phone number format");
+        }
+        return org.springframework.http.ResponseEntity.ok(service.createLead(lead));
     }
 
     @GetMapping

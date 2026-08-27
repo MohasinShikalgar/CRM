@@ -5,11 +5,10 @@ public class DashboardDTO {
     private long totalLeads;
     private long totalCustomers;
     private long totalDeals;
-    private long openTickets;
-
+    private long totalTasks;
+    private long pendingTasks;
+    private long totalInteractions;
     private double salesForecast;
-    private long slaBreachedTickets;
-    private double averageRoi;
 
     public long getTotalLeads() {
         return totalLeads;
@@ -35,12 +34,28 @@ public class DashboardDTO {
         this.totalDeals = totalDeals;
     }
 
-    public long getOpenTickets() {
-        return openTickets;
+    public long getTotalTasks() {
+        return totalTasks;
     }
 
-    public void setOpenTickets(long openTickets) {
-        this.openTickets = openTickets;
+    public void setTotalTasks(long totalTasks) {
+        this.totalTasks = totalTasks;
+    }
+
+    public long getPendingTasks() {
+        return pendingTasks;
+    }
+
+    public void setPendingTasks(long pendingTasks) {
+        this.pendingTasks = pendingTasks;
+    }
+
+    public long getTotalInteractions() {
+        return totalInteractions;
+    }
+
+    public void setTotalInteractions(long totalInteractions) {
+        this.totalInteractions = totalInteractions;
     }
 
     public double getSalesForecast() {
@@ -49,21 +64,5 @@ public class DashboardDTO {
 
     public void setSalesForecast(double salesForecast) {
         this.salesForecast = salesForecast;
-    }
-
-    public long getSlaBreachedTickets() {
-        return slaBreachedTickets;
-    }
-
-    public void setSlaBreachedTickets(long slaBreachedTickets) {
-        this.slaBreachedTickets = slaBreachedTickets;
-    }
-
-    public double getAverageRoi() {
-        return averageRoi;
-    }
-
-    public void setAverageRoi(double averageRoi) {
-        this.averageRoi = averageRoi;
     }
 }

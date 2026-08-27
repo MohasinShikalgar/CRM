@@ -9,7 +9,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import com.example.demo.security.JwtFilter;
+
 import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
@@ -23,12 +25,13 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .cors(Customizer.withDefaults())
+                .cors(Customizer.withDefaults())  //Different domains (frontend-backend) ke beech request allow karta hai
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**", "/error").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/leads").permitAll()
                         .requestMatchers("/api/leads/**").hasAnyRole("ADMIN", "SALES")
                         .requestMatchers("/api/deals/**").authenticated() // Allow any authenticated user to access Deals
                         .requestMatchers("/api/customers/**").hasAnyRole("ADMIN", "SALES", "SUPPORT")

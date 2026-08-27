@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entity.Campaign;
+import com.example.demo.repository.AdTrackingRepository;
 import com.example.demo.repository.CampaignRepository;
 
 @Service
@@ -14,6 +16,9 @@ public class CampaignService {
 
     @Autowired
     private CampaignRepository campaignRepo;
+
+    @Autowired
+    private AdTrackingRepository adTrackingRepo;
 
     // create campaign
     public Campaign createCampaign(Campaign campaign){
@@ -44,9 +49,11 @@ public class CampaignService {
     }
 
     // delete campaign
+    @Transactional
     public void deleteCampaign(Long id) {
         Campaign campaign = campaignRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Campaign not found"));
+        adTrackingRepo.deleteByCampaign(campaign);
         campaignRepo.delete(campaign);
     }
 }

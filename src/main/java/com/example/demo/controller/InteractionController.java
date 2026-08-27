@@ -25,7 +25,7 @@ public class InteractionController {
 
     @PostMapping("/send")
     public Interaction sendEmail(@RequestBody com.example.demo.dto.EmailRequest request) {
-        
+        // Ensure SentById is provided from frontend or passed correctly
         return service.sendEmail(
                 request.getCustomerId(),
                 request.getSentById(),

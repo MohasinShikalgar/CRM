@@ -1,6 +1,7 @@
 package com.example.demo.config;
 
 import java.util.Properties;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +23,7 @@ public class MailConfig {
     @Value("${spring.mail.password}")
     private String password;
 
-    @Bean
+    @Bean  // It is used to Create the object and that object managed by the spring container.
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(host);

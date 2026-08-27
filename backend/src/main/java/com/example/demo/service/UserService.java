@@ -28,4 +28,8 @@ public class UserService {
 
         return Optional.empty();
     }
+
+    public java.util.List<User> getUsersByRole(com.example.demo.entity.Role role) {
+        return repo.findByRole(role);
+    }
 }

@@ -12,7 +12,7 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtil {
 
-    // Needs to be at least 256 bits (32 characters) for HS256
+    
     private String secret = "crmSecretKey2024SuperLongKeyForHmacSha256_MustBeAtLeast256BitsLongAndThisIsEvenLongerJustInCase";
 
     private Key getSigningKey() {
