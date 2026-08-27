@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { campaignsService } from '../../services/api';
 import ModalForm from '../../components/ModalForm';
 import toast from 'react-hot-toast';
-import { Plus, Megaphone, Mail, Users, Calendar } from 'lucide-react';
+import { Plus, Megaphone, Mail, Users, Calendar, Edit2, Trash2 } from 'lucide-react';
 
 const emptyForm = { name: '', emailSubject: '', emailMessage: '', targetGroup: '', budget: '', revenueGenerated: '' };
 
@@ -99,17 +99,21 @@ export default function Campaigns() {
                         >
                             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                    <div style={{ width: 40, height: 40, borderRadius: 12, background: 'linear-gradient(135deg,#8b5cf6,#ec4899)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                                        <Megaphone size={18} color="white" />
+                                    <div style={{ width: 40, height: 40, borderRadius: 8, background: '#EFF6FF', border: '1px solid #DBEAFE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                        <Megaphone size={18} color="#2563EB" />
                                     </div>
                                     <div>
-                                        <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{camp.campaignName}</div>
-                                        <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{camp.targetGroup}</div>
+                                        <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1F2937' }}>{camp.campaignName}</div>
+                                        <div style={{ fontSize: '0.75rem', color: '#4B5563', fontWeight: 500 }}>{camp.targetGroup}</div>
                                     </div>
                                 </div>
-                                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                    <button onClick={() => handleEdit(camp)} style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer', padding: '0.2rem' }} title="Edit">✏️</button>
-                                    <button onClick={() => handleDelete(camp.id)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0.2rem' }} title="Delete">🗑️</button>
+                                <div style={{ display: 'flex', gap: '0.4rem' }}>
+                                    <button onClick={() => handleEdit(camp)} style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '4px', cursor: 'pointer', padding: '0.3rem', display: 'flex', alignItems: 'center' }} title="Edit">
+                                        <Edit2 size={12} style={{ color: '#4B5563' }} />
+                                    </button>
+                                    <button onClick={() => handleDelete(camp.id)} style={{ background: '#FEF2F2', border: '1px solid #FEE2E2', borderRadius: '4px', cursor: 'pointer', padding: '0.3rem', display: 'flex', alignItems: 'center' }} title="Delete">
+                                        <Trash2 size={12} style={{ color: '#EF4444' }} />
+                                    </button>
                                 </div>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem', fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
@@ -121,10 +125,10 @@ export default function Campaigns() {
                                     {camp.emailMessage}
                                 </p>
                             )}
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '0.5rem', background: 'rgba(255,255,255,0.03)', padding: '0.5rem', borderRadius: '6px' }}>
-                                <div><span style={{color: 'var(--color-text-muted)'}}>Budget:</span> ${camp.budget || 0}</div>
-                                <div><span style={{color: 'var(--color-text-muted)'}}>Revenue:</span> <span style={{color: '#10b981'}}>${camp.revenueGenerated || 0}</span></div>
-                                <div><span style={{color: 'var(--color-text-muted)'}}>ROI:</span> {camp.budget ? (((camp.revenueGenerated || 0) - camp.budget) / camp.budget * 100).toFixed(0) : 0}%</div>
+                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '0.5rem', background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.5rem', borderRadius: '6px' }}>
+                                <div><span style={{color: '#4B5563'}}>Budget:</span> <span style={{fontWeight: 600, color: '#1F2937'}}>${camp.budget || 0}</span></div>
+                                <div><span style={{color: '#4B5563'}}>Revenue:</span> <span style={{color: '#10B981', fontWeight: 600}}>${camp.revenueGenerated || 0}</span></div>
+                                <div><span style={{color: '#4B5563'}}>ROI:</span> <span style={{fontWeight: 600, color: '#2563EB'}}>{camp.budget ? (((camp.revenueGenerated || 0) - camp.budget) / camp.budget * 100).toFixed(0) : 0}%</span></div>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.72rem', color: 'var(--color-text-muted)' }}>
                                 <Calendar size={11} />

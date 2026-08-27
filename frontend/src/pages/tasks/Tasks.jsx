@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { tasksService, customersService } from '../../services/api';
+import { tasksService, customersService, usersService } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import DataTable from '../../components/DataTable';
 import ModalForm from '../../components/ModalForm';
@@ -9,7 +9,7 @@ import { CheckSquare, Edit2, CheckCircle, Plus } from 'lucide-react';
 
 const STATUS_COLORS = { PENDING: 'badge-yellow', COMPLETED: 'badge-green' };
 
-const emptyForm = { title: '', description: '', status: 'PENDING', dueDate: '', customerId: '' };
+const emptyForm = { title: '', description: '', status: 'PENDING', dueDate: '', customerId: '', assignedToId: '' };
 
 export default function Tasks() {
     const { user } = useAuth();
@@ -21,13 +21,15 @@ export default function Tasks() {
     const [form, setForm] = useState(emptyForm);
     const [saving, setSaving] = useState(false);
     const [completingId, setCompletingId] = useState(null);
+    const [supportUsers, setSupportUsers] = useState([]);
 
     const load = () => {
         setLoading(true);
-        Promise.allSettled([tasksService.getAll(), customersService.getAll()])
-            .then(([tr, cr]) => {
+        Promise.allSettled([tasksService.getAll(), customersService.getAll(), usersService.getByRole('SUPPORT')])
+            .then(([tr, cr, ur]) => {
                 if (tr.status === 'fulfilled') setTasks(tr.value.data || []);
                 if (cr.status === 'fulfilled') setCustomers(cr.value.data || []);
+                if (ur.status === 'fulfilled') setSupportUsers(ur.value.data || []);
             })
             .catch(() => toast.error('Failed to load'))
             .finally(() => setLoading(false));
@@ -43,6 +45,7 @@ export default function Tasks() {
             status: row.status || 'PENDING',
             dueDate: row.dueDate || '',
             customerId: row.customer?.id || '',
+            assignedToId: row.assignedTo?.id || '',
         });
         setModal(true);
     };
@@ -57,7 +60,7 @@ export default function Tasks() {
                 toast.success('Task updated!');
             } else {
                 const cId = form.customerId || customers[0]?.id;
-                const uId = user?.id;
+                const uId = form.assignedToId || supportUsers[0]?.id || user?.id;
                 await tasksService.create(uId, cId, { title: form.title, description: form.description, status: form.status, dueDate: form.dueDate || null });
                 toast.success('Task created!');
             }
@@ -150,7 +153,10 @@ export default function Tasks() {
                 </div>
                 <div>
                     <label className="form-label">Assigned To</label>
-                    <input type="text" className="input-field" value={user?.name || 'Current User'} disabled style={{ opacity: 0.7 }} />
+                    <select className="input-field" value={form.assignedToId} onChange={e => setForm(f => ({ ...f, assignedToId: e.target.value }))}>
+                        <option value="">Select support user...</option>
+                        {supportUsers.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
+                    </select>
                 </div>
             </ModalForm>
         </div>

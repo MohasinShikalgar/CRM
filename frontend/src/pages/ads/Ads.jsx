@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { adsService, campaignsService } from '../../services/api';
 import ModalForm from '../../components/ModalForm';
 import toast from 'react-hot-toast';
-import { Plus, BarChart2, Eye, MousePointer, TrendingUp } from 'lucide-react';
+import { Plus, BarChart2, Eye, MousePointer, TrendingUp, Edit2, Trash2 } from 'lucide-react';
 
 const emptyForm = { platform: '', leadsGenerated: '', createdDate: new Date().toISOString().split('T')[0] };
 
@@ -100,28 +100,32 @@ export default function Ads() {
                             className="crm-card"
                             style={{ position: 'relative', overflow: 'hidden' }}
                         >
-                            <div style={{ position: 'absolute', top: -15, right: -15, width: 80, height: 80, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.2), transparent 70%)' }} />
+                            <div style={{ position: 'absolute', top: -15, right: -15, width: 80, height: 80, borderRadius: '50%', background: 'radial-gradient(circle, rgba(37, 99, 235, 0.1), transparent 70%)' }} />
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                 <div>
-                                    <div style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: '0.25rem' }}>Ad #{ad.id}</div>
-                                    {ad.platform && <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>{ad.platform}</div>}
+                                    <div style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: '0.25rem', color: '#1F2937' }}>Ad #{ad.id}</div>
+                                    {ad.platform && <div style={{ fontSize: '0.75rem', color: '#4B5563', marginBottom: '1rem', fontWeight: 500 }}>{ad.platform}</div>}
                                 </div>
-                                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                    <button onClick={() => handleEdit(ad)} style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer', padding: '0.2rem' }} title="Edit">✏️</button>
-                                    <button onClick={() => handleDelete(ad.id)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0.2rem' }} title="Delete">🗑️</button>
+                                <div style={{ display: 'flex', gap: '0.4rem' }}>
+                                    <button onClick={() => handleEdit(ad)} style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '4px', cursor: 'pointer', padding: '0.3rem', display: 'flex', alignItems: 'center' }} title="Edit">
+                                        <Edit2 size={12} style={{ color: '#4B5563' }} />
+                                    </button>
+                                    <button onClick={() => handleDelete(ad.id)} style={{ background: '#FEF2F2', border: '1px solid #FEE2E2', borderRadius: '4px', cursor: 'pointer', padding: '0.3rem', display: 'flex', alignItems: 'center' }} title="Delete">
+                                        <Trash2 size={12} style={{ color: '#EF4444' }} />
+                                    </button>
                                 </div>
                             </div>
                             
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                                <div style={{ textAlign: 'center', padding: '0.5rem', borderRadius: 8, background: 'rgba(99,102,241,0.08)' }}>
-                                    <Eye size={14} style={{ color: '#6366f1', margin: '0 auto 0.3rem' }} />
-                                    <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-text)' }}>{ad.leadsGenerated || 0}</div>
-                                    <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>Leads Generated</div>
+                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                                <div style={{ textAlign: 'center', padding: '0.5rem', borderRadius: 8, background: '#EFF6FF', border: '1px solid #DBEAFE' }}>
+                                    <Eye size={14} style={{ color: '#2563EB', margin: '0 auto 0.3rem' }} />
+                                    <div style={{ fontSize: '1rem', fontWeight: 700, color: '#1F2937' }}>{ad.leadsGenerated || 0}</div>
+                                    <div style={{ fontSize: '0.65rem', color: '#4B5563', fontWeight: 500 }}>Leads</div>
                                 </div>
-                                <div style={{ textAlign: 'center', padding: '0.5rem', borderRadius: 8, background: 'rgba(16,185,129,0.08)' }}>
-                                    <TrendingUp size={14} style={{ color: '#10b981', margin: '0 auto 0.3rem' }} />
-                                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#10b981' }}>{ad.createdDate ? new Date(ad.createdDate).toLocaleDateString() : '—'}</div>
-                                    <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>Created Date</div>
+                                <div style={{ textAlign: 'center', padding: '0.5rem', borderRadius: 8, background: '#ECFDF5', border: '1px solid #D1FAE5' }}>
+                                    <TrendingUp size={14} style={{ color: '#10B981', margin: '0 auto 0.3rem' }} />
+                                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#10B981' }}>{ad.createdDate ? new Date(ad.createdDate).toLocaleDateString() : '—'}</div>
+                                    <div style={{ fontSize: '0.65rem', color: '#4B5563', fontWeight: 500 }}>Date</div>
                                 </div>
                             </div>
                         </motion.div>

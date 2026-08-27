@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { dealsService, customersService } from '../../services/api';
+import { dealsService, customersService, usersService } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import ModalForm from '../../components/ModalForm';
 import toast from 'react-hot-toast';
@@ -9,10 +9,10 @@ import { Plus, DollarSign, Calendar, Building, User as UserIcon, Edit2, CheckCir
 
 const STAGES = ['NEW', 'CLOSED'];
 const STAGE_COLORS = {
-    NEW: { from: '#6366f1', to: '#8b5cf6', badge: 'badge-purple' },
-    CLOSED: { from: '#10b981', to: '#059669', badge: 'badge-green' },
+    NEW: { from: '#2563EB', to: '#1E40AF', badge: 'badge-blue' },
+    CLOSED: { from: '#10B981', to: '#059669', badge: 'badge-green' },
 };
-const emptyForm = { dealName: '', value: '', stage: 'NEW', customerId: '', createdDate: '' };
+const emptyForm = { dealName: '', value: '', stage: 'NEW', customerId: '', createdDate: '', assignedToId: '' };
 
 export default function Deals() {
     const { user } = useAuth();
@@ -23,15 +23,18 @@ export default function Deals() {
     const [editItem, setEditItem] = useState(null);
     const [form, setForm] = useState(emptyForm);
     const [saving, setSaving] = useState(false);
+    const [salesUsers, setSalesUsers] = useState([]);
 
     const load = async () => {
         setLoading(true);
         try {
-            const [dr, cr] = await Promise.allSettled([dealsService.getAll(), customersService.getAll()]);
+            const [dr, cr, ur] = await Promise.allSettled([dealsService.getAll(), customersService.getAll(), usersService.getByRole('SALES')]);
             if (dr.status === 'fulfilled') setDeals(dr.value.data || []);
             else console.error('Failed to load deals:', dr.reason);
             if (cr.status === 'fulfilled') setCustomers(cr.value.data || []);
             else console.error('Failed to load customers:', cr.reason);
+            if (ur.status === 'fulfilled') setSalesUsers(ur.value.data || []);
+            else console.error('Failed to load sales users:', ur.reason);
         } catch (e) { console.error('Load error:', e); toast.error('Failed to load'); }
         finally { setLoading(false); }
     };
@@ -63,6 +66,7 @@ export default function Deals() {
             stage: deal.stage || 'NEW',
             customerId: deal.customer?.id || '',
             createdDate: deal.createdDate || '',
+            assignedToId: deal.assignedTo?.id || '',
         });
         setModal(true);
     };
@@ -77,7 +81,7 @@ export default function Deals() {
                 toast.success('Deal updated!');
             } else {
                 const cId = form.customerId || customers[0]?.id;
-                const uId = user?.id;
+                const uId = form.assignedToId || salesUsers[0]?.id || user?.id;
                 await dealsService.create(cId, uId, { dealName: form.dealName, value: form.value, stage: form.stage, createdDate: form.createdDate || null });
                 toast.success('Deal created!');
             }
@@ -114,13 +118,13 @@ export default function Deals() {
                             <div key={stage}>
                                 {/* Column header */}
                                 <div style={{
-                                    padding: '0.8rem 1rem', borderRadius: '12px 12px 0 0', marginBottom: 0,
-                                    background: `linear-gradient(135deg, ${sc.from}22, ${sc.to}11)`,
-                                    border: `1px solid ${sc.from}44`, borderBottom: 'none',
+                                    padding: '0.8rem 1rem', borderRadius: '8px 8px 0 0', marginBottom: 0,
+                                    background: '#F8FAFC',
+                                    border: '1px solid #E2E8F0', borderBottom: 'none',
                                     display: 'flex', alignItems: 'center', justifyContent: 'space-between'
                                 }}>
-                                    <span style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--color-text)' }}>{stage}</span>
-                                    <span style={{ background: `${sc.from}33`, color: sc.from, borderRadius: 99, padding: '0.1rem 0.6rem', fontSize: '0.75rem', fontWeight: 700 }}>
+                                    <span style={{ fontWeight: 700, fontSize: '0.85rem', color: '#1F2937', fontFamily: 'var(--font-heading)' }}>{stage}</span>
+                                    <span style={{ background: sc.from + '15', color: sc.from, borderRadius: 99, padding: '0.1rem 0.6rem', fontSize: '0.75rem', fontWeight: 700 }}>
                                         {stageDeal.length}
                                     </span>
                                 </div>
@@ -132,10 +136,10 @@ export default function Deals() {
                                             ref={provided.innerRef} {...provided.droppableProps}
                                             style={{
                                                 minHeight: 400, padding: '0.5rem',
-                                                background: snapshot.isDraggingOver ? `${sc.from}10` : 'var(--glass-bg)',
-                                                border: `1px solid ${snapshot.isDraggingOver ? sc.from + '60' : 'var(--glass-border)'}`,
-                                                borderTop: 'none', borderRadius: '0 0 12px 12px',
-                                                backdropFilter: 'blur(12px)', transition: 'background 0.2s, border-color 0.2s',
+                                                background: snapshot.isDraggingOver ? '#EFF6FF' : '#FFFFFF',
+                                                border: '1px solid #E2E8F0',
+                                                borderTop: 'none', borderRadius: '0 0 8px 8px',
+                                                transition: 'background 0.2s, border-color 0.2s',
                                                 display: 'flex', flexDirection: 'column', gap: '0.5rem'
                                             }}
                                         >
@@ -149,44 +153,44 @@ export default function Deals() {
                                                             <motion.div
                                                                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                                                                 style={{
-                                                                    background: snap.isDragging ? 'rgba(99,102,241,0.15)' : 'rgba(255,255,255,0.04)',
-                                                                    border: `1px solid ${snap.isDragging ? sc.from + '80' : 'var(--glass-border)'}`,
-                                                                    borderRadius: 12, padding: '1rem',
-                                                                    boxShadow: snap.isDragging ? `0 8px 24px ${sc.from}30` : 'none',
+                                                                    background: snap.isDragging ? '#EFF6FF' : '#FFFFFF',
+                                                                    border: snap.isDragging ? `1px solid ${sc.from}` : '1px solid #E2E8F0',
+                                                                    borderRadius: 8, padding: '1rem',
+                                                                    boxShadow: snap.isDragging ? '0 10px 15px -3px rgba(37, 99, 235, 0.1)' : '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
                                                                     cursor: 'grab',
                                                                     display: 'flex', flexDirection: 'column', gap: '0.6rem'
                                                                 }}
                                                             >
-                                                                <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-text)' }}>
+                                                                <div style={{ fontWeight: 600, fontSize: '0.9rem', color: '#1F2937' }}>
                                                                     {deal.dealName || 'Unnamed Deal'}
                                                                 </div>
                                                                 
-                                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+                                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', fontSize: '0.75rem', color: '#4B5563' }}>
                                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                                                                        <DollarSign size={12} style={{ color: '#10b981' }} />
-                                                                        <span style={{ color: 'var(--color-text)' }}>Amount: {deal.value != null ? Number(deal.value).toLocaleString() : '0'}</span>
+                                                                        <DollarSign size={12} style={{ color: '#10B981' }} />
+                                                                        <span style={{ color: '#1F2937', fontWeight: 500 }}>{deal.value != null ? Number(deal.value).toLocaleString() : '0'}</span>
                                                                     </div>
                                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                                                                        <Calendar size={12} style={{ color: '#8b5cf6' }} />
-                                                                        <span style={{ color: 'var(--color-text)' }}>{deal.createdDate || 'No Date'}</span>
+                                                                        <Calendar size={12} style={{ color: '#2563EB' }} />
+                                                                        <span style={{ color: '#1F2937', fontWeight: 500 }}>{deal.createdDate || 'No Date'}</span>
                                                                     </div>
                                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                                                                        <Building size={12} style={{ color: '#06b6d4' }} />
-                                                                        <span style={{ color: 'var(--color-text)' }}>{deal.customer?.name || 'Unknown Customer'}</span>
+                                                                        <Building size={12} style={{ color: '#2563EB' }} />
+                                                                        <span style={{ color: '#1F2937', fontWeight: 500 }}>{deal.customer?.name || 'Unknown Customer'}</span>
                                                                     </div>
                                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                                                                        <UserIcon size={12} style={{ color: '#ec4899' }} />
-                                                                        <span style={{ color: 'var(--color-text)' }}>
-                                                                            Sales: {deal.assignedTo?.name || 'Unassigned'}
+                                                                        <UserIcon size={12} style={{ color: '#2563EB' }} />
+                                                                        <span style={{ color: '#1F2937', fontWeight: 500 }}>
+                                                                            {deal.assignedTo?.name || 'Unassigned'}
                                                                         </span>
                                                                     </div>
                                                                 </div>
 
                                                                 {/* Action Buttons */}
-                                                                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.3rem' }}>
+                                                                <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.3rem' }}>
                                                                     <button
                                                                         className="btn-secondary"
-                                                                        style={{ padding: '0.25rem 0.6rem', fontSize: '0.7rem', display: 'flex', alignItems: 'center', gap: '0.3rem', cursor: 'pointer' }}
+                                                                        style={{ padding: '0.25rem 0.5rem', fontSize: '0.7rem', display: 'flex', alignItems: 'center', gap: '0.3rem', cursor: 'pointer', borderRadius: '4px' }}
                                                                         onClick={(e) => { e.stopPropagation(); openEdit(deal); }}
                                                                     >
                                                                         <Edit2 size={11} /> Edit
@@ -194,7 +198,7 @@ export default function Deals() {
                                                                     {(deal.stage || '').toUpperCase() !== 'CLOSED' && (
                                                                         <button
                                                                             className="btn-success"
-                                                                            style={{ padding: '0.25rem 0.6rem', fontSize: '0.7rem', display: 'flex', alignItems: 'center', gap: '0.3rem', cursor: 'pointer' }}
+                                                                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.7rem', display: 'flex', alignItems: 'center', gap: '0.3rem', cursor: 'pointer', borderRadius: '4px' }}
                                                                             onClick={(e) => { e.stopPropagation(); handleClose(deal); }}
                                                                         >
                                                                             <CheckCircle size={11} /> Close
@@ -208,13 +212,13 @@ export default function Deals() {
                                             ))}
                                             {provided.placeholder}
                                             {stageDeal.length === 0 && !loading && (
-                                                <div style={{ textAlign: 'center', padding: '2rem 1rem', color: 'var(--color-text-muted)', fontSize: '0.8rem' }}>
+                                                <div style={{ textAlign: 'center', padding: '2rem 1rem', color: '#6B7280', fontSize: '0.8rem' }}>
                                                     Drop deals here
                                                 </div>
                                             )}
                                         </div>
                                     )}
-                                </Droppable>
+                                 </Droppable>
                                 )}
                             </div>
                         );
@@ -249,6 +253,13 @@ export default function Deals() {
                 <div>
                     <label className="form-label">Created Date</label>
                     <input type="date" className="input-field" value={form.createdDate} onChange={e => setForm(f => ({ ...f, createdDate: e.target.value }))} />
+                </div>
+                <div>
+                    <label className="form-label">Assign To</label>
+                    <select className="input-field" value={form.assignedToId} onChange={e => setForm(f => ({ ...f, assignedToId: e.target.value }))}>
+                        <option value="">Select sales rep...</option>
+                        {salesUsers.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
+                    </select>
                 </div>
             </ModalForm>
         </div>

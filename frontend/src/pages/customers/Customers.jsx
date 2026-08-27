@@ -52,14 +52,16 @@ export default function Customers() {
             await customersService.delete(row.id);
             toast.success('Customer deleted');
             load();
-        } catch { toast.error('Failed to delete'); }
+        } catch (err) {
+            toast.error(err?.response?.data?.message || err?.response?.data || 'Failed to delete customer');
+        }
     };
 
     const columns = [
         {
             key: 'name', label: 'Name', render: (v, row) => (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                    <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 700, color: 'white', flexShrink: 0 }}>
+                    <div style={{ width: 30, height: 30, borderRadius: '50%', background: '#EFF6FF', border: '1px solid #DBEAFE', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 700, color: '#2563EB', flexShrink: 0 }}>
                         {v?.[0]?.toUpperCase() || '?'}
                     </div>
                     <span>{v}</span>
@@ -75,8 +77,11 @@ export default function Customers() {
         <div>
             <div className="page-header">
                 <h2 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <UserCheck size={22} /> Customers
+                    <UserCheck size={22} style={{ color: '#2563EB' }} /> Customers
                 </h2>
+                <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="btn-primary" onClick={openCreate} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Plus size={16} /> New Customer
+                </motion.button>
             </div>
 
             <DataTable columns={columns} data={data} loading={loading} actions={(row) => [

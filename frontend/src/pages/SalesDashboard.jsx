@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { dashboardService } from '../services/api';
 import StatsCard from '../components/StatsCard';
-import { Users, Briefcase, TrendingUp, Activity } from 'lucide-react';
+import { Users, Briefcase, TrendingUp } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 
@@ -14,11 +14,13 @@ const mockMonthly = [
     { month: 'Feb', leads: 62, deals: 39 },
     { month: 'Mar', leads: 85, deals: 56 },
 ];
+
 const pieDealData = [
-    { name: 'Prospect', value: 40, color: '#6366f1' },
-    { name: 'Negotiation', value: 35, color: '#8b5cf6' },
-    { name: 'Closed', value: 25, color: '#10b981' },
+    { name: 'Prospect', value: 40, color: '#1E40AF' },
+    { name: 'Negotiation', value: 35, color: '#2563EB' },
+    { name: 'Closed', value: 25, color: '#93C5FD' },
 ];
+
 const RADIAN = Math.PI / 180;
 const renderLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
     const r = innerRadius + (outerRadius - innerRadius) * 0.5;
@@ -26,7 +28,15 @@ const renderLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) =>
     const y = cy + r * Math.sin(-midAngle * RADIAN);
     return percent > 0.05 ? <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central" fontSize={11} fontWeight={600}>{`${(percent * 100).toFixed(0)}%`}</text> : null;
 };
-const tooltipStyle = { background: 'rgba(15,15,26,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#e2e8f0', fontSize: '0.8rem', boxShadow: '0 4px 20px rgba(0,0,0,0.4)' };
+
+const tooltipStyle = {
+    background: '#FFFFFF',
+    border: '1px solid #E2E8F0',
+    borderRadius: 8,
+    color: '#1F2937',
+    fontSize: '0.8rem',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
+};
 
 export default function SalesDashboard() {
     const [stats, setStats] = useState(null);
@@ -47,39 +57,69 @@ export default function SalesDashboard() {
 
     return (
         <div>
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="crm-card" style={{ marginBottom: '1.5rem', padding: '1.5rem 2rem', background: 'linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.15), rgba(6,182,212,0.1))', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+            {/* Welcome banner */}
+            <motion.div 
+                initial={{ opacity: 0, y: -10 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                className="crm-card" 
+                style={{ 
+                    marginBottom: '1.5rem', padding: '1.5rem 2rem', 
+                    background: '#EFF6FF', 
+                    border: '1px solid #DBEAFE', 
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' 
+                }}
+            >
                 <div>
-                    <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text)', marginBottom: '0.25rem' }}>Welcome, Sales Team 👋</h2>
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>Here's what's happening in your pipeline today.</p>
+                    <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1F2937', marginBottom: '0.25rem', fontFamily: 'var(--font-heading)' }}>Welcome, Sales Team 👋</h2>
+                    <p style={{ color: '#4B5563', fontSize: '0.875rem', fontWeight: 500 }}>Here's what's happening in your pipeline today.</p>
                 </div>
             </motion.div>
+
+            {/* Stats cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
                 {cards.map(c => <StatsCard key={c.label} loading={loading} {...c} />)}
             </div>
+
+            {/* Charts Row */}
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="crm-card">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}><TrendingUp size={16} style={{ color: '#6366f1' }} /><span style={{ fontWeight: 700, fontSize: '0.95rem' }}>Pipeline Performance</span></div>
+                <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="crm-card">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem', borderBottom: '1px solid #F1F5F9', paddingBottom: '0.5rem' }}>
+                        <TrendingUp size={16} style={{ color: '#2563EB' }} />
+                        <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1F2937' }}>Pipeline Performance</span>
+                    </div>
                     <ResponsiveContainer width="100%" height={220}>
                         <AreaChart data={mockMonthly}>
                             <defs>
-                                <linearGradient id="gLeads" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} /><stop offset="95%" stopColor="#6366f1" stopOpacity={0} /></linearGradient>
-                                <linearGradient id="gDeals" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#10b981" stopOpacity={0.3} /><stop offset="95%" stopColor="#10b981" stopOpacity={0} /></linearGradient>
+                                <linearGradient id="gLeads" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#2563EB" stopOpacity={0.2} />
+                                    <stop offset="95%" stopColor="#2563EB" stopOpacity={0} />
+                                </linearGradient>
+                                <linearGradient id="gDeals" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#60A5FA" stopOpacity={0.2} />
+                                    <stop offset="95%" stopColor="#60A5FA" stopOpacity={0} />
+                                </linearGradient>
                             </defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                            <XAxis dataKey="month" tick={{ fill: '#94a3b8', fontSize: 11 }} axisLine={false} tickLine={false} />
-                            <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} axisLine={false} tickLine={false} />
+                            <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+                            <XAxis dataKey="month" tick={{ fill: '#6B7280', fontSize: 11 }} axisLine={false} tickLine={false} />
+                            <YAxis tick={{ fill: '#6B7280', fontSize: 11 }} axisLine={false} tickLine={false} />
                             <Tooltip contentStyle={tooltipStyle} />
-                            <Area type="monotone" dataKey="leads" stroke="#6366f1" fill="url(#gLeads)" strokeWidth={2} dot={false} name="Leads" />
-                            <Area type="monotone" dataKey="deals" stroke="#10b981" fill="url(#gDeals)" strokeWidth={2} dot={false} name="Deals" />
+                            <Area type="monotone" dataKey="leads" stroke="#2563EB" fill="url(#gLeads)" strokeWidth={2} dot={false} name="Leads" />
+                            <Area type="monotone" dataKey="deals" stroke="#60A5FA" fill="url(#gDeals)" strokeWidth={2} dot={false} name="Deals" />
                         </AreaChart>
                     </ResponsiveContainer>
                 </motion.div>
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="crm-card">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}><Briefcase size={16} style={{ color: '#8b5cf6' }} /><span style={{ fontWeight: 700, fontSize: '0.95rem' }}>Deal Stages</span></div>
+
+                <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="crm-card">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem', borderBottom: '1px solid #F1F5F9', paddingBottom: '0.5rem' }}>
+                        <Briefcase size={16} style={{ color: '#2563EB' }} />
+                        <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1F2937' }}>Deal Stages</span>
+                    </div>
                     <ResponsiveContainer width="100%" height={220}>
                         <PieChart>
-                            <Pie data={pieDealData} cx="50%" cy="50%" innerRadius={50} outerRadius={85} labelLine={false} label={renderLabel} dataKey="value">{pieDealData.map((e, i) => <Cell key={i} fill={e.color} />)}</Pie>
-                            <Legend formatter={(v) => <span style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>{v}</span>} />
+                            <Pie data={pieDealData} cx="50%" cy="50%" innerRadius={50} outerRadius={85} labelLine={false} label={renderLabel} dataKey="value">
+                                {pieDealData.map((e, i) => <Cell key={i} fill={e.color} />)}
+                            </Pie>
+                            <Legend formatter={(v) => <span style={{ color: '#4B5563', fontSize: '0.75rem', fontWeight: 500 }}>{v}</span>} />
                             <Tooltip contentStyle={tooltipStyle} />
                         </PieChart>
                     </ResponsiveContainer>

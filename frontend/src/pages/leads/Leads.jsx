@@ -48,12 +48,14 @@ export default function Leads() {
     };
 
     const handleDelete = async (row) => {
-        if (!confirm(`Delete lead "${row.name}"?`)) return;
+        if (!confirm(`Delete lead "${row.name}" and all associated records in the project?`)) return;
         try {
             await leadsService.delete(row.id);
-            toast.success('Lead deleted');
+            toast.success('Lead and associated records deleted');
             load();
-        } catch { toast.error('Failed to delete'); }
+        } catch (err) {
+            toast.error(err?.response?.data?.message || err?.response?.data || 'Failed to delete lead');
+        }
     };
 
     const handleConvert = async (row) => {
@@ -77,15 +79,7 @@ export default function Leads() {
             label: 'Follow-Up', 
             render: (v) => v ? new Date(v).toLocaleDateString() : '—' 
         },
-        { 
-            key: 'leadScore', 
-            label: 'Score', 
-            render: (v) => v ? (
-                <span style={{ fontWeight: 600, color: v > 80 ? '#ef4444' : 'inherit' }}>
-                    {v} {v > 80 && '🔥'}
-                </span>
-            ) : '—' 
-        },
+
         { key: 'status', label: 'Status', render: (v) => <span className={`badge ${STATUS_COLORS[v] || 'badge-gray'}`}>{v}</span> },
     ];
 
@@ -115,28 +109,30 @@ export default function Leads() {
             }} />
 
             <ModalForm open={modal} onClose={closeModal} title={editItem ? 'Edit Lead' : 'Create Lead'} onSubmit={handleSubmit} loading={saving}>
-                {[
-                    ['name', 'Full Name', 'text', 'Jane Doe'],
-                    ['email', 'Email', 'email', 'jane@company.com'],
-                    ['phone', 'Phone', 'text', '+1 234 567 8900'],
-                    ['company', 'Company', 'text', 'Acme Corp'],
-                    ['source', 'Source', 'text', 'Website / LinkedIn / Referral'],
-                ].map(([key, label, type, ph]) => (
-                    <div key={key}>
-                        <label className="form-label">{label}</label>
-                        <input type={type} className="input-field" placeholder={ph} value={form[key] || ''} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    {[
+                        ['name', 'Full Name', 'text', 'Jane Doe'],
+                        ['email', 'Email', 'email', 'jane@company.com'],
+                        ['phone', 'Phone', 'text', '+1 234 567 8900'],
+                        ['company', 'Company', 'text', 'Acme Corp'],
+                        ['source', 'Source', 'text', 'Website / LinkedIn / Referral'],
+                    ].map(([key, label, type, ph]) => (
+                        <div key={key}>
+                            <label className="form-label">{label}</label>
+                            <input type={type} className="input-field" placeholder={ph} value={form[key] || ''} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} />
+                        </div>
+                    ))}
+                    
+                    <div>
+                        <label className="form-label">Follow-Up Date</label>
+                        <input type="date" className="input-field" value={form.followUpDate || ''} onChange={e => setForm(f => ({ ...f, followUpDate: e.target.value }))} />
                     </div>
-                ))}
-                
-                <div>
-                    <label className="form-label">Follow-Up Date</label>
-                    <input type="date" className="input-field" value={form.followUpDate || ''} onChange={e => setForm(f => ({ ...f, followUpDate: e.target.value }))} />
-                </div>
-                <div>
-                    <label className="form-label">Status</label>
-                    <select className="input-field" value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}>
-                        {['NEW', 'CONTACTED', 'QUALIFIED', 'LOST'].map(s => <option key={s}>{s}</option>)}
-                    </select>
+                    <div>
+                        <label className="form-label">Status</label>
+                        <select className="input-field" value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}>
+                            {['NEW', 'CONTACTED', 'QUALIFIED', 'LOST'].map(s => <option key={s}>{s}</option>)}
+                        </select>
+                    </div>
                 </div>
             </ModalForm>
         </div>

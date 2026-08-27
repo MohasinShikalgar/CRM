@@ -14,51 +14,54 @@ export default function ModalForm({ open, onClose, title, children, onSubmit, lo
                     exit={{ opacity: 0 }}
                     style={{
                         position: 'fixed', inset: 0, zIndex: 1000,
-                        background: 'rgba(0,0,0,0.6)',
-                        backdropFilter: 'blur(4px)',
+                        background: 'rgba(15, 23, 42, 0.4)',
+                        backdropFilter: 'blur(2px)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         padding: '1rem'
                     }}
                     onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
                 >
                     <motion.div
-                        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                        initial={{ scale: 0.95, opacity: 0, y: 10 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
-                        exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                        exit={{ scale: 0.95, opacity: 0, y: 10 }}
+                        transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                         style={{
                             width: '100%', maxWidth: width,
-                            background: 'rgba(15,15,26,0.95)',
-                            border: '1px solid var(--glass-border)',
-                            borderRadius: 20,
+                            maxHeight: '90vh',
+                            display: 'flex', flexDirection: 'column',
+                            background: '#FFFFFF',
+                            border: '1px solid #E2E8F0',
+                            borderRadius: 12,
                             overflow: 'hidden',
-                            boxShadow: '0 25px 60px rgba(0,0,0,0.5), 0 0 40px rgba(99,102,241,0.1)',
+                            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
                         }}
                     >
                         {/* Header */}
                         <div style={{
-                            padding: '1.1rem 1.5rem',
-                            borderBottom: '1px solid var(--glass-border)',
+                            padding: '1rem 1.5rem',
+                            borderBottom: '1px solid #E2E8F0',
                             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                            background: 'linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.05))'
+                            background: '#F8FAFC'
                         }}>
-                            <h3 style={{ fontWeight: 700, fontSize: '1rem', background: 'linear-gradient(135deg,#a5b4fc,#c084fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                            <h3 style={{ fontWeight: 700, fontSize: '1rem', color: '#1F2937', fontFamily: 'var(--font-heading)' }}>
                                 {title}
                             </h3>
-                            <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer', padding: 4, display: 'flex' }}>
+                            <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#6B7280', cursor: 'pointer', padding: 4, display: 'flex', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#1F2937'} onMouseLeave={(e) => e.currentTarget.style.color = '#6B7280'}>
                                 <X size={18} />
                             </button>
                         </div>
 
                         {/* Body */}
-                        <form onSubmit={onSubmit}>
-                            <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', flex: 1 }}>
+                            <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', overflowY: 'auto', flex: 1 }}>
                                 {children}
                             </div>
                             <div style={{
                                 padding: '1rem 1.5rem',
-                                borderTop: '1px solid var(--glass-border)',
-                                display: 'flex', gap: '0.75rem', justifyContent: 'flex-end'
+                                borderTop: '1px solid #E2E8F0',
+                                display: 'flex', gap: '0.75rem', justifyContent: 'flex-end',
+                                background: '#F8FAFC'
                             }}>
                                 <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
                                 <button type="submit" className="btn-primary" disabled={loading}>

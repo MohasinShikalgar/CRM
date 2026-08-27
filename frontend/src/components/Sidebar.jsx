@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import {
     LayoutDashboard, Users, UserCheck, Briefcase, CheckSquare,
-    Mail, TicketIcon, Megaphone, BarChart2, FileText, LogOut, Zap
+    Mail, FileText, LogOut, Zap
 } from 'lucide-react';
 
 const links = [
@@ -14,9 +14,6 @@ const links = [
     { to: '/deals', icon: Briefcase, label: 'Deals' },
     { to: '/tasks', icon: CheckSquare, label: 'Tasks' },
     { to: '/interactions', icon: Mail, label: 'Interactions' },
-    { to: '/tickets', icon: TicketIcon, label: 'Tickets' },
-    { to: '/campaigns', icon: Megaphone, label: 'Campaigns' },
-    { to: '/ads', icon: BarChart2, label: 'Ad Tracking' },
     { to: '/reports', icon: FileText, label: 'Reports' },
 ];
 
@@ -29,13 +26,13 @@ export default function Sidebar({ collapsed, setCollapsed }) {
         displayLinks = [
             { to: '/sales', icon: LayoutDashboard, label: 'Sales Dashboard' },
             { to: '/leads', icon: Users, label: 'Leads' },
+            { to: '/customers', icon: UserCheck, label: 'Customers' },
             { to: '/deals', icon: Briefcase, label: 'Deals' },
             { to: '/reports', icon: FileText, label: 'Reports' },
         ];
     } else if (user?.role === 'SUPPORT') {
-         displayLinks = [
+        displayLinks = [
             { to: '/support', icon: LayoutDashboard, label: 'Support Dashboard' },
-            { to: '/tickets', icon: TicketIcon, label: 'Tickets' },
             { to: '/interactions', icon: Mail, label: 'Interactions' },
             { to: '/reports', icon: FileText, label: 'Reports' },
         ];
@@ -52,33 +49,33 @@ export default function Sidebar({ collapsed, setCollapsed }) {
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             style={{
                 height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 100,
-                background: 'rgba(15,15,26,0.95)',
-                borderRight: '1px solid var(--glass-border)',
-                backdropFilter: 'blur(20px)',
+                background: '#FFFFFF',
+                borderRight: '1px solid #E2E8F0',
                 display: 'flex', flexDirection: 'column',
                 overflow: 'hidden',
                 flexShrink: 0,
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)'
             }}
         >
             {/* Logo */}
             <div style={{
                 padding: '1.25rem 1rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
-                borderBottom: '1px solid var(--glass-border)', cursor: 'pointer'
+                borderBottom: '1px solid #E2E8F0', cursor: 'pointer'
             }} onClick={() => setCollapsed(!collapsed)}>
                 <div style={{
-                    width: 38, height: 38, borderRadius: 10, flexShrink: 0,
-                    background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                    width: 38, height: 38, borderRadius: 8, flexShrink: 0,
+                    background: '#2563EB',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    boxShadow: '0 0 20px rgba(99,102,241,0.5)'
+                    boxShadow: '0 2px 8px rgba(37, 99, 235, 0.25)'
                 }}>
                     <Zap size={20} color="white" />
                 </div>
                 {!collapsed && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
-                        <div style={{ fontWeight: 800, fontSize: '1.1rem', background: 'linear-gradient(135deg,#a5b4fc,#c084fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                            CRM Pro
+                        <div style={{ fontWeight: 800, fontSize: '1.15rem', color: '#1F2937', fontFamily: 'var(--font-heading)' }}>
+                            CRM
                         </div>
-                        <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginTop: '-2px' }}>Management Suite</div>
+                        <div style={{ fontSize: '0.65rem', color: '#6B7280', marginTop: '-2px', fontWeight: 500 }}>Management Suite</div>
                     </motion.div>
                 )}
             </div>
@@ -107,10 +104,10 @@ export default function Sidebar({ collapsed, setCollapsed }) {
             </nav>
 
             {/* User + Logout */}
-            <div style={{ padding: '0.75rem 0.5rem', borderTop: '1px solid var(--glass-border)' }}>
+            <div style={{ padding: '0.75rem 0.5rem', borderTop: '1px solid #E2E8F0' }}>
                 {!collapsed && user && (
                     <div style={{ padding: '0.5rem 0.75rem', marginBottom: '0.5rem' }}>
-                        <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text)' }}>{user.name || user.email}</div>
+                        <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1F2937' }}>{user.name || user.email}</div>
                         <div style={{ 
                             display: 'inline-block',
                             marginTop: '0.25rem',
@@ -120,13 +117,13 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                             fontWeight: 700,
                             letterSpacing: '0.05em',
                             textTransform: 'uppercase',
-                            background: user.role === 'ADMIN' ? 'rgba(239,68,68,0.15)' : 
-                                        user.role === 'SALES' ? 'rgba(16,185,129,0.15)' : 
-                                        'rgba(99,102,241,0.15)',
-                            color: user.role === 'ADMIN' ? '#ef4444' : 
-                                   user.role === 'SALES' ? '#10b981' : 
-                                   '#6366f1',
-                            border: `1px solid ${user.role === 'ADMIN' ? 'rgba(239,68,68,0.3)' : user.role === 'SALES' ? 'rgba(16,185,129,0.3)' : 'rgba(99,102,241,0.3)'}`
+                            background: user.role === 'ADMIN' ? '#FEF2F2' : 
+                                        user.role === 'SALES' ? '#ECFDF5' : 
+                                        '#EFF6FF',
+                            color: user.role === 'ADMIN' ? '#EF4444' : 
+                                   user.role === 'SALES' ? '#10B981' : 
+                                   '#2563EB',
+                            border: `1px solid ${user.role === 'ADMIN' ? '#FEE2E2' : user.role === 'SALES' ? '#D1FAE5' : '#DBEAFE'}`
                         }}>
                             {user.role} USER
                         </div>
@@ -139,8 +136,8 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                     style={{ width: '100%', border: 'none', background: 'none', justifyContent: collapsed ? 'center' : 'flex-start', cursor: 'pointer' }}
                     title={collapsed ? 'Logout' : undefined}
                 >
-                    <LogOut size={18} style={{ flexShrink: 0, color: '#ef4444' }} />
-                    {!collapsed && <span style={{ color: '#ef4444' }}>Logout</span>}
+                    <LogOut size={18} style={{ flexShrink: 0, color: '#EF4444' }} />
+                    {!collapsed && <span style={{ color: '#EF4444' }}>Logout</span>}
                 </motion.button>
             </div>
         </motion.aside>

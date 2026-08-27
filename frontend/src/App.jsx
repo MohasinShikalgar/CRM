@@ -18,9 +18,6 @@ import Customers from './pages/customers/Customers';
 import Deals from './pages/deals/Deals';
 import Tasks from './pages/tasks/Tasks';
 import Interactions from './pages/interactions/Interactions';
-import Tickets from './pages/tickets/Tickets';
-import Campaigns from './pages/campaigns/Campaigns';
-import Ads from './pages/ads/Ads';
 import Reports from './pages/reports/Reports';
 
 export default function App() {
@@ -36,25 +33,22 @@ export default function App() {
             {/* Protected routes */}
             <Route path="/" element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
               
-              {/* Common Fallback, Dashboard logic inside MainLayout / Login redirects */}
+              {/* Common Fallback */}
               <Route index element={<Navigate to="/dashboard" replace />} />
               
               {/* Admin Routes */}
               <Route path="dashboard" element={<ProtectedRoute allowedRoles={['ADMIN']}><Dashboard /></ProtectedRoute>} />
-              <Route path="customers" element={<ProtectedRoute allowedRoles={['ADMIN']}><Customers /></ProtectedRoute>} />
               <Route path="tasks" element={<ProtectedRoute allowedRoles={['ADMIN']}><Tasks /></ProtectedRoute>} />
-              <Route path="campaigns" element={<ProtectedRoute allowedRoles={['ADMIN']}><Campaigns /></ProtectedRoute>} />
-              <Route path="ads" element={<ProtectedRoute allowedRoles={['ADMIN']}><Ads /></ProtectedRoute>} />
               <Route path="reports" element={<ProtectedRoute allowedRoles={['ADMIN', 'SALES', 'SUPPORT']}><Reports /></ProtectedRoute>} />
 
               {/* Sales + Admin Routes */}
               <Route path="sales" element={<ProtectedRoute allowedRoles={['ADMIN', 'SALES']}><SalesDashboard /></ProtectedRoute>} />
               <Route path="leads" element={<ProtectedRoute allowedRoles={['ADMIN', 'SALES']}><Leads /></ProtectedRoute>} />
+              <Route path="customers" element={<ProtectedRoute allowedRoles={['ADMIN', 'SALES']}><Customers /></ProtectedRoute>} />
               <Route path="deals" element={<ProtectedRoute allowedRoles={['ADMIN', 'SALES']}><Deals /></ProtectedRoute>} />
 
               {/* Support + Admin Routes */}
               <Route path="support" element={<ProtectedRoute allowedRoles={['ADMIN', 'SUPPORT']}><SupportDashboard /></ProtectedRoute>} />
-              <Route path="tickets" element={<ProtectedRoute allowedRoles={['ADMIN', 'SUPPORT']}><Tickets /></ProtectedRoute>} />
               <Route path="interactions" element={<ProtectedRoute allowedRoles={['ADMIN', 'SUPPORT']}><Interactions /></ProtectedRoute>} />
             </Route>
 

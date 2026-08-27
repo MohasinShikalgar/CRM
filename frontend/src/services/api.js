@@ -130,3 +130,8 @@ export const reportsService = {
         })),
 };
 
+// ─── Users ──────────────────────────────────────────────────────────────────
+export const usersService = {
+    getByRole: (role) => api.get(`/api/users/role/${role}`),
+};
+
