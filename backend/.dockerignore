@@ -1,0 +1,11 @@
+target/
+.mvn/
+.git/
+.gitignore
+*.md
+.project
+.classpath
+.settings/
+.factorypath
+spring_boot_log.txt
+last_error.txt
